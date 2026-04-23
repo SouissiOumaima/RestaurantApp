@@ -1,0 +1,91 @@
+﻿@model List<RestaurantApp.Core.Entities.Menu>
+@{
+    ViewData["Title"] = "Gestion Menus"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><i class="bi bi-menu-button-wide"></i> Menus</h4>
+    <a asp-action="CreateMenu" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Ajouter
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Libellé</th>
+                    <th>Restaurant</th>
+                    <th>Prix total</th>
+                    <th>Nb plats</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr>
+                        <td>@m.Id</td>
+                        <td>
+                            <strong>@m.Libelle</strong>
+                            @if (!string.IsNullOrEmpty(m.Description))
+                            {
+                                <br />
+                            
+                                <small class="text-muted">@m.Description</small>
+                            }
+                        </td>
+                        <td>@m.Restaurant?.Nom</td>
+                        <td><span class="badge bg-success">@m.PrixTotal.ToString("0.00") DT</span></td>
+                        <td>@m.Plats.Count plat(s)</td>
+                        <td>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="showConfirm(this, @m.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <span class="confirm-zone d-none" id="confirm-@m.Id">
+                                    <span class="text-danger small fw-semibold me-1">Supprimer ?</span>
+                                    <form asp-action="DeleteMenu" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@m.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Oui</button>
+                                    </form>
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                            onclick="hideConfirm(@m.Id)">
+                                        Non
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showConfirm(btn, id) {
+            document.querySelectorAll('.confirm-zone').forEach(z => z.classList.add('d-none'));
+            document.querySelectorAll('.btn-outline-danger').forEach(b => b.classList.remove('d-none'));
+            document.getElementById('confirm-' + id).classList.remove('d-none');
+            btn.classList.add('d-none');
+        }
+        function hideConfirm(id) {
+            document.getElementById('confirm-' + id).classList.add('d-none');
+            document.querySelectorAll('.btn-outline-danger').forEach(b => b.classList.remove('d-none'));
+        }
+    </script>
+}

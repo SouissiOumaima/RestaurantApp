@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RestaurantApp.Core/RestaurantApp.Core.csproj" />
+    <Project Path="src/RestaurantApp.Infrastructure/RestaurantApp.Infrastructure.csproj" />
+    <Project Path="src/RestaurantApp.Web/RestaurantApp.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RestaurantApp.Tests/RestaurantApp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Éléments de solution/">
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>

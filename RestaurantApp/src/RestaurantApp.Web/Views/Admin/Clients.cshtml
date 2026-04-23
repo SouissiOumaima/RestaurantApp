@@ -1,0 +1,85 @@
+﻿@model List<RestaurantApp.Core.Entities.Client>
+@{
+    ViewData["Title"] = "Gestion Clients"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><i class="bi bi-people"></i> Clients</h4>
+    <span class="badge bg-primary fs-6">@Model.Count clients</span>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Points fidélité</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.ClientId</td>
+                        <td><strong>@c.Nom</strong></td>
+                        <td>@c.Prenom</td>
+                        <td class="text-muted small">@c.Email</td>
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-star-fill"></i> @c.PointFidelite pts
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="showConfirm(this, @c.ClientId)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <span class="confirm-zone d-none" id="confirm-@c.ClientId">
+                                    <span class="text-danger small fw-semibold me-1">Supprimer ?</span>
+                                    <form asp-action="DeleteClient" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@c.ClientId" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Oui</button>
+                                    </form>
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                            onclick="hideConfirm(@c.ClientId)">
+                                        Non
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showConfirm(btn, id) {
+            document.querySelectorAll('.confirm-zone').forEach(z => z.classList.add('d-none'));
+            document.querySelectorAll('.btn-outline-danger').forEach(b => b.classList.remove('d-none'));
+            document.getElementById('confirm-' + id).classList.remove('d-none');
+            btn.classList.add('d-none');
+        }
+        function hideConfirm(id) {
+            document.getElementById('confirm-' + id).classList.add('d-none');
+            document.querySelectorAll('.btn-outline-danger').forEach(b => b.classList.remove('d-none'));
+        }
+    </script>
+}

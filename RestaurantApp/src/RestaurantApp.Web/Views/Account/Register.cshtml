@@ -1,0 +1,116 @@
+﻿@model RestaurantApp.Web.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Inscription"; Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="auth-card">
+    <div class="auth-logo">
+        <div class="auth-logo-icon">🍽</div>
+    </div>
+    <div class="auth-header">
+        <h2>Créer un compte</h2>
+        <p>Rejoignez GestionRestaurants</p>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="auth-alert">
+            <span>⚠</span>
+            <div asp-validation-summary="All"></div>
+        </div>
+    }
+
+    <form asp-action="Register" method="post">
+
+        <div class="form-row-2">
+            <div class="form-group">
+                <label asp-for="Nom">Nom</label>
+                <div class="input-wrap">
+                    <span class="input-icon">👤</span>
+                    <input asp-for="Nom" class="form-input" placeholder="Votre nom" />
+                </div>
+                <span asp-validation-for="Nom" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Prenom">Prénom</label>
+                <div class="input-wrap">
+                    <span class="input-icon">👤</span>
+                    <input asp-for="Prenom" class="form-input" placeholder="Votre prénom" />
+                </div>
+                <span asp-validation-for="Prenom" class="field-error"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email">Email</label>
+            <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <input asp-for="Email" class="form-input" placeholder="votre@email.com" />
+            </div>
+            <span asp-validation-for="Email" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Mot de passe</label>
+            <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input asp-for="Password" type="password" class="form-input"
+                       placeholder="Min. 6 caractères" id="pwd1" />
+                <button type="button" class="toggle-pwd" onclick="togglePwd('pwd1')">👁</button>
+            </div>
+            <span asp-validation-for="Password" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">Confirmer le mot de passe</label>
+            <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input asp-for="ConfirmPassword" type="password" class="form-input"
+                       placeholder="Répéter le mot de passe" id="pwd2" />
+                <button type="button" class="toggle-pwd" onclick="togglePwd('pwd2')">👁</button>
+            </div>
+            <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+        </div>
+
+        <div class="strength-bar" id="strengthBar">
+            <div class="strength-fill" id="strengthFill"></div>
+        </div>
+        <div class="strength-label" id="strengthLabel"></div>
+
+        <button type="submit" class="btn-auth btn-success-auth">
+            Créer mon compte
+        </button>
+    </form>
+
+    <div class="auth-divider"><span>ou</span></div>
+
+    <p class="auth-switch">
+        Déjà un compte ?
+        <a asp-action="Login">Se connecter</a>
+    </p>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePwd(id) {
+            const i = document.getElementById(id);
+            i.type = i.type === 'password' ? 'text' : 'password';
+        }
+        document.getElementById('pwd1')?.addEventListener('input', function () {
+            const v = this.value;
+            const fill = document.getElementById('strengthFill');
+            const label = document.getElementById('strengthLabel');
+            let pct = 0, color = '', text = '';
+            if (v.length >= 6)  { pct = 33; color = '#ef4444'; text = 'Faible'; }
+            if (v.length >= 8 && /[A-Z]/.test(v)) { pct = 66; color = '#f59e0b'; text = 'Moyen'; }
+            if (v.length >= 10 && /[A-Z]/.test(v) && /[0-9]/.test(v)) { pct = 100; color = '#10b981'; text = 'Fort'; }
+            fill.style.width = pct + '%';
+            fill.style.background = color;
+            label.textContent = text;
+            label.style.color = color;
+        });
+    </script>
+}

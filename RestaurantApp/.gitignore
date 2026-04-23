@@ -1,0 +1,7 @@
+# .gitignore
+**/bin/
+**/obj/
+*.user
+.vs/
+appsettings.Development.json
+*.db
