@@ -58,3 +58,12 @@ http://localhost:5000
 
 ## Tests
 dotnet test tests/RestaurantApp.Tests 
+
+## Équipe
+| Membre | Responsabilité |
+|---|---|
+| Souissi Oumaima | Dashboard + Tests + Repository |
+| Maaoui Ghofran | Restaurants + Recherche |
+| Safta Adem | Réservations + Fidélité |
+| Chabanne Achraf | Panel Admin CRUD |
+| Souri Abd Mouhib | Authentification + Architecture |
