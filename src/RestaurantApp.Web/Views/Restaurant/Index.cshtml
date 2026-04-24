@@ -1,0 +1,104 @@
+﻿@model RestaurantApp.Web.ViewModels.RestaurantSearchViewModel
+@{
+    ViewData["Title"] = "Restaurants";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-shop"></i> Nos Restaurants</h2>
+</div>
+
+<!-- Formulaire de recherche -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Nom</label>
+                <input name="nom" value="@Model.Nom"
+                       class="form-control" placeholder="Rechercher..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Type de cuisine</label>
+                <select name="type" class="form-select">
+                    <option value="">Tous les types</option>
+                    @foreach (var t in Enum.GetValues<RestaurantApp.Core.Enums.TypeRestaurant>())
+                    {
+                        <option value="@t" selected="@(Model.Type == t)">@t</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Prix max (DT)</label>
+                <input name="prixMax" type="number" value="@Model.PrixMax"
+                       class="form-control" placeholder="Ex: 50" min="0" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Chercher
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Résultats -->
+@if (!Model.Results.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucun restaurant trouvé.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var r in Model.Results)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">@r.Nom</h5>
+                            <span class="badge bg-primary">@r.Type</span>
+                        </div>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt"></i> @r.Adresse
+                        </p>
+                        @if (r.Telephone != null)
+                        {
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-telephone"></i> @r.Telephone
+                            </p>
+                        }
+                        <div class="d-flex align-items-center mb-3">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="bi @(i <= r.NoteGlobale ? "bi-star-fill text-warning" : "bi-star text-muted")"></i>
+                            }
+                            <small class="ms-1 text-muted">(@r.NoteGlobale.ToString("0.0"))</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@r.Id"
+                                   class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-eye"></i> Voir
+                            </a>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a asp-controller="Reservation" asp-action="Create"
+                                       asp-route-restaurantId="@r.Id"
+                                       class="btn btn-success btn-sm flex-fill">
+                                    <i class="bi bi-calendar-plus"></i> Réserver
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        <i class="bi bi-table"></i>
+                        @r.Tables.Count(t => t.Disponible) tables disponibles
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
