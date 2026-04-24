@@ -1,0 +1,109 @@
+﻿@model List<RestaurantApp.Core.Entities.Employe>
+@{
+    ViewData["Title"] = "Gestion Employés"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4><i class="bi bi-person-badge"></i> Employés</h4>
+    <a asp-action="CreateEmploye" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Ajouter
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert border-0 shadow-sm" style="background:#fff8f0;border-left:4px solid #f59e0b !important;border-radius:10px;">
+        <div class="d-flex align-items-start gap-3">
+            <div style="font-size:1.5rem">⚠</div>
+            <div>
+                <div class="fw-semibold mb-1" style="color:#92400e">Action bloquée</div>
+                <div style="color:#78350f;font-size:0.9rem">@TempData["Error"]</div>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nom complet</th>
+                    <th>Type</th>
+                    <th>Email</th>
+                    <th>Restaurant</th>
+                    <th>Salaire</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>@e.Id</td>
+                        <td><strong>@e.Nom @e.Prenom</strong></td>
+                        <td>
+                            @if (e is RestaurantApp.Core.Entities.Serveur s)
+                            {
+                                <span class="badge bg-info text-dark">Serveur</span>
+                                <small class="text-muted ms-1">Note: @s.Note/5</small>
+                            }
+                            else if (e is RestaurantApp.Core.Entities.Chef c)
+                            {
+                                <span class="badge bg-warning text-dark">Chef</span>
+                                <small class="text-muted ms-1">@c.Specialite</small>
+                            }
+                        </td>
+                        <td class="text-muted small">@e.Email</td>
+                        <td>@e.Restaurant?.Nom</td>
+                        <td>@e.Salaire.ToString("0.00") DT</td>
+                        <td>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="showConfirm(this, @e.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <span class="confirm-zone d-none" id="confirm-@e.Id">
+                                    <span class="text-danger small fw-semibold me-1">Supprimer ?</span>
+                                    <form asp-action="DeleteEmploye" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@e.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Oui</button>
+                                    </form>
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                            onclick="hideConfirm(@e.Id)">
+                                        Non
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showConfirm(btn, id) {
+            document.querySelectorAll('.confirm-zone').forEach(z => z.classList.add('d-none'));
+            document.querySelectorAll('.btn-outline-danger').forEach(b => b.classList.remove('d-none'));
+            document.getElementById('confirm-' + id).classList.remove('d-none');
+            btn.classList.add('d-none');
+        }
+        function hideConfirm(id) {
+            document.getElementById('confirm-' + id).classList.add('d-none');
+            document.querySelectorAll('.btn-outline-danger').forEach(b => b.classList.remove('d-none'));
+        }
+    </script>
+}
