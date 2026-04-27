@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Nouvel Employé"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Nouvel Employé</h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="CreateEmploye" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Type d'employé</label>
+                        <select name="typeEmploye" class="form-select" id="typeSelect"
+                                onchange="toggleFields()">
+                            <option value="Serveur">Serveur</option>
+                            <option value="Chef">Chef</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Nom</label>
+                            <input name="nom" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Prénom</label>
+                            <input name="prenom" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">CIN</label>
+                        <input name="cin" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input name="email" type="email" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Numéro de téléphone</label>
+                        <input name="numTel" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Salaire (DT)</label>
+                        <input name="salaire" type="number" step="0.01" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Restaurant</label>
+                        <select name="restaurantId" class="form-select" asp-items="ViewBag.Restaurants">
+                            <option value="">-- Choisir --</option>
+                        </select>
+                    </div>
+
+                    <!-- Champs Serveur -->
+                    <div id="serveurFields">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Note (0-5)</label>
+                            <input name="note" type="number" min="0" max="5" class="form-control" value="0" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Zone de service</label>
+                            <input name="zone" class="form-control" placeholder="Ex: Salle A" />
+                        </div>
+                    </div>
+
+                    <!-- Champs Chef -->
+                    <div id="chefFields" style="display:none">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Spécialité</label>
+                            <input name="specialite" class="form-control" placeholder="Ex: Pâtes fraîches" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Années d'expérience</label>
+                            <input name="anneeExp" type="number" min="0" max="50" class="form-control" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-save"></i> Enregistrer
+                        </button>
+                        <a asp-action="Employes" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleFields() {
+            const type = document.getElementById('typeSelect').value;
+            document.getElementById('serveurFields').style.display = type === 'Serveur' ? 'block' : 'none';
+            document.getElementById('chefFields').style.display   = type === 'Chef'    ? 'block' : 'none';
+        }
+    </script>
+}

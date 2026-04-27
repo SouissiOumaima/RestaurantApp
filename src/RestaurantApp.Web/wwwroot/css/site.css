@@ -1,0 +1,105 @@
+/* ── Hero ─────────────────────────────────────────────────── */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 4rem 2rem;
+}
+
+/* ── CTA ──────────────────────────────────────────────────── */
+.cta-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* ── Restaurant cards ─────────────────────────────────────── */
+.restaurant-card {
+    transition: transform .2s ease, box-shadow .2s ease;
+    border-radius: 12px !important;
+}
+
+    .restaurant-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+    }
+
+/* ── Stat cards Admin ─────────────────────────────────────── */
+.stat-card {
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.stat-icon {
+    font-size: 1.8rem;
+    opacity: .8;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: .8rem;
+    opacity: .85;
+}
+
+/* ── Tables ───────────────────────────────────────────────── */
+.table th {
+    font-weight: 500;
+    font-size: .85rem;
+    letter-spacing: .03em;
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+.badge {
+    font-weight: 500;
+}
+
+/* ── Navbar active ────────────────────────────────────────── */
+.navbar .nav-link.active {
+    color: #fff !important;
+    font-weight: 500;
+}
+
+/* ── Forms ────────────────────────────────────────────────── */
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 .2rem rgba(102,126,234,.2);
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.btn-primary {
+    background: #667eea;
+    border-color: #667eea;
+}
+
+    .btn-primary:hover {
+        background: #5a67d8;
+        border-color: #5a67d8;
+    }
+
+/* ── Auth card ────────────────────────────────────────────── */
+.auth-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+    .auth-header h2 {
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+/* ── Alerts ───────────────────────────────────────────────── */
+.alert {
+    border-radius: 10px;
+    border: none;
+}

@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Nouvelle Table"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Nouvelle Table</h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="CreateTable" method="post">
+                    @Html.AntiForgeryToken()
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div asp-validation-summary="All" class="alert alert-danger"></div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Restaurant</label>
+                        <select name="RestaurantId" class="form-select"
+                                asp-items="ViewBag.Restaurants">
+                            <option value="">-- Choisir --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Numéro de table</label>
+                        <input name="Numero" type="number" min="1" max="999"
+                               class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Capacité (personnes)</label>
+                        <input name="Capacite" type="number" min="1" max="20"
+                               class="form-control" required />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input name="Disponible" type="checkbox" class="form-check-input"
+                               checked value="true" />
+                        <label class="form-check-label">Disponible</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-info text-white flex-fill">
+                            <i class="bi bi-save"></i> Enregistrer
+                        </button>
+                        <a asp-action="Tables" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

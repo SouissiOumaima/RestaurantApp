@@ -1,0 +1,132 @@
+﻿@model List<RestaurantApp.Core.Entities.Restaurant>
+@{
+    ViewData["Title"] = "Accueil";
+}
+
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 mb-5">
+    <h1 class="display-4 fw-bold text-white">
+        Trouvez votre restaurant idéal
+    </h1>
+    <p class="lead text-white-50 mb-4">
+        Réservez une table en quelques clics, découvrez les meilleurs restaurants
+    </p>
+    <form asp-controller="Restaurant" asp-action="Index" method="get"
+          class="d-flex justify-content-center gap-2 flex-wrap">
+        <input name="nom" class="form-control w-auto"
+               placeholder="Nom du restaurant..." style="min-width:260px" />
+        <select name="type" class="form-select w-auto">
+            <option value="">Tous les types</option>
+            @foreach (var t in Enum.GetValues<RestaurantApp.Core.Enums.TypeRestaurant>())
+            {
+                <option value="@t">@t</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-warning fw-semibold px-4">
+            <i class="bi bi-search"></i> Rechercher
+        </button>
+    </form>
+</div>
+
+<!-- Stats rapides -->
+<div class="row g-3 mb-5 text-center">
+    <div class="col-md-4">
+        <div class="p-4 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-25">
+            <div class="fs-1 fw-bold text-primary">@Model.Count+</div>
+            <div class="text-muted">Restaurants</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25">
+            <div class="fs-1 fw-bold text-success">100%</div>
+            <div class="text-muted">Réservations en ligne</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25">
+            <div class="fs-1 fw-bold text-warning">24/7</div>
+            <div class="text-muted">Disponible</div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Restaurants -->
+<h3 class="fw-bold mb-4">
+    <i class="bi bi-star-fill text-warning"></i> Meilleurs restaurants
+</h3>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    @foreach (var r in Model)
+    {
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm restaurant-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h5 class="card-title mb-0 fw-bold">@r.Nom</h5>
+                        <span class="badge bg-primary rounded-pill">@r.Type</span>
+                    </div>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger"></i> @r.Adresse
+                    </p>
+                    <!-- Étoiles -->
+                    <div class="mb-3">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= r.NoteGlobale
+                            ? "bi-star-fill text-warning"
+                            : "bi-star text-muted")"></i>
+                    }
+                    <small class="text-muted ms-1">
+                        (@r.NoteGlobale.ToString("0.0"))
+                    </small>
+                </div>
+                <!-- Tables dispo -->
+                <p class="small text-success mb-3">
+                    <i class="bi bi-check-circle-fill"></i>
+                    @r.Tables.Count(t => t.Disponible) tables disponibles
+                </p>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Restaurant"
+                           asp-action="Details"
+                           asp-route-id="@r.Id"
+                           class="btn btn-outline-primary btn-sm flex-fill">
+                        <i class="bi bi-eye"></i> Détails
+                    </a>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Reservation"
+                               asp-action="Create"
+                               asp-route-restaurantId="@r.Id"
+                               class="btn btn-success btn-sm flex-fill">
+                            <i class="bi bi-calendar-plus"></i> Réserver
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account"
+                               asp-action="Login"
+                               class="btn btn-outline-success btn-sm flex-fill">
+                            <i class="bi bi-box-arrow-in-right"></i> Connexion
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+</div>
+
+<!-- CTA Inscription -->
+@if (!User.Identity?.IsAuthenticated ?? true)
+{
+    <div class="cta-section text-center p-5 rounded-4 mb-4">
+        <h3 class="fw-bold text-white">Rejoignez-nous dès maintenant</h3>
+        <p class="text-white-50 mb-4">
+            Créez un compte gratuit et réservez votre première table
+        </p>
+        <a asp-controller="Account" asp-action="Register"
+               class="btn btn-warning btn-lg fw-semibold px-5">
+            <i class="bi bi-person-plus"></i> S'inscrire gratuitement
+        </a>
+    </div>
+}

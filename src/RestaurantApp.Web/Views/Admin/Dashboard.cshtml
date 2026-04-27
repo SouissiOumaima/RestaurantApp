@@ -1,0 +1,132 @@
+﻿@using RestaurantApp.Infrastructure.Services
+@model StatistiquesViewModel
+@{
+    ViewData["Title"] = "Dashboard Admin"; Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Metric cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card bg-primary text-white">
+            <div class="stat-icon"><i class="bi bi-shop"></i></div>
+            <div class="stat-value">@Model.TotalRestaurants</div>
+            <div class="stat-label">Restaurants</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success text-white">
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+            <div class="stat-value">@Model.TotalClients</div>
+            <div class="stat-label">Clients</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-dark">
+            <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+            <div class="stat-value">@Model.TotalReservations</div>
+            <div class="stat-label">Réservations totales</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info text-white">
+            <div class="stat-icon"><i class="bi bi-person-badge"></i></div>
+            <div class="stat-value">@Model.TotalEmployes</div>
+            <div class="stat-label">Employés</div>
+        </div>
+    </div>
+</div>
+
+<!-- Graphiques -->
+<div class="row g-4 mb-4">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-bar-chart"></i> Réservations des 6 derniers mois
+            </div>
+            <div class="card-body">
+                <canvas id="chartReservations" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-star-fill text-warning"></i> Top 5 restaurants
+            </div>
+            <div class="card-body">
+                <canvas id="chartTopRestaurants" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Liens rapides -->
+<div class="row g-3">
+    @foreach (var item in new[] {
+        ("Restaurants", "Restaurants", "bi-shop",       "primary"),
+        ("Employes",    "Employés",    "bi-person-badge","success"),
+        ("Tables",      "Tables",      "bi-table",       "info"),
+        ("Menus",       "Menus",       "bi-menu-button", "warning"),
+        ("Reservations","Réservations","bi-calendar",    "danger"),
+        ("Clients",     "Clients",     "bi-people",      "secondary")
+    })
+    {
+        <div class="col-md-2">
+            <a asp-action="@item.Item1"
+                   class="btn btn-outline-@item.Item4 w-100 py-3">
+                <i class="bi @item.Item3 d-block fs-4 mb-1"></i>
+                @item.Item2
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Graphique réservations par mois
+        new Chart(document.getElementById('chartReservations'), {
+        type: 'bar',
+        data: {
+        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                Model.ReservationsParMois.Select(r => r.Mois))),
+        datasets: [{
+        label: 'Réservations',
+        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                 Model.ReservationsParMois.Select(r => r.Count))),
+        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+        borderColor:     'rgba(102, 126, 234, 1)',
+        borderWidth: 1,
+        borderRadius: 6
+        }]
+        },
+        options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales:  { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+        });
+
+        // Graphique top restaurants
+        new Chart(document.getElementById('chartTopRestaurants'), {
+        type: 'doughnut',
+        data: {
+        labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                Model.TopRestaurants.Select(r => r.Nom))),
+        datasets: [{
+        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                                 Model.TopRestaurants.Select(r => r.Note))),
+        backgroundColor: [
+        '#667eea','#48bb78','#ed8936','#e53e3e','#805ad5'
+        ]
+        }]
+        },
+        options: {
+        responsive: true,
+        plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12 } }
+        }
+        }
+        });
+    </script>
+}

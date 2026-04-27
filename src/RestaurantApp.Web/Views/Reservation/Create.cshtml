@@ -1,0 +1,138 @@
+﻿@model RestaurantApp.Web.ViewModels.ReservationCreateViewModel
+@{
+    ViewData["Title"] = "Nouvelle réservation";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-plus"></i>
+                    Réserver — @Model.RestaurantNom
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" id="reservationForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="RestaurantId" />
+                    <input type="hidden" asp-for="RestaurantNom" />
+
+                    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+                    }
+
+                    <div class="mb-3">
+                        <label asp-for="Date" class="form-label fw-semibold"></label>
+                        <input asp-for="Date" type="datetime-local"
+                               class="form-control" id="dateInput" />
+                        <span asp-validation-for="Date" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="NbPersonnes" class="form-label fw-semibold"></label>
+                        <input asp-for="NbPersonnes" type="number"
+                               class="form-control" min="1" max="20"
+                               id="nbPersonnesInput" />
+                        <span asp-validation-for="NbPersonnes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TableRestaurantId" class="form-label fw-semibold">
+                            Table disponible
+                        </label>
+                        <select asp-for="TableRestaurantId"
+                                class="form-select" id="tableSelect">
+                            <option value="">-- Choisir une date d'abord --</option>
+                        </select>
+                        <span asp-validation-for="TableRestaurantId"
+                              class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="2"
+                                  placeholder="Allergie, occasion spéciale..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success flex-fill">
+                            <i class="bi bi-check-circle"></i> Confirmer la réservation
+                        </button>
+                        <a asp-controller="Restaurant"
+                               asp-action="Details"
+                               asp-route-id="@Model.RestaurantId"
+                               class="btn btn-outline-secondary">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        async function chargerTables() {
+            const dateInput = document.getElementById('dateInput');
+            const nbInput   = document.getElementById('nbPersonnesInput');
+            const select    = document.getElementById('tableSelect');
+            const restaurantId = @Model.RestaurantId;
+
+            const date        = dateInput.value;
+            const nbPersonnes = parseInt(nbInput.value);
+
+            if (!date || !nbPersonnes) return;
+
+            select.innerHTML = '<option>Chargement...</option>';
+
+            try {
+                const token = document.querySelector('[name=__RequestVerificationToken]').value;
+
+                const response = await fetch('/Reservation/GetTables', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        restaurantId: restaurantId,
+                        date: date,
+                        nbPersonnes: nbPersonnes
+                    })
+                });
+
+                const tables = await response.json();
+
+                if (tables.length === 0) {
+                    select.innerHTML = '<option value="">Aucune table disponible pour cette date</option>';
+                } else {
+                    select.innerHTML =
+                        '<option value="">-- Choisir une table --</option>' +
+                        tables.map(t =>
+                            `<option value="${t.id}">Table ${t.numero} (${t.capacite} pers. max)</option>`
+                        ).join('');
+                }
+            } catch (err) {
+                select.innerHTML = '<option value="">Erreur de chargement</option>';
+                console.error(err);
+            }
+        }
+
+        document.getElementById('dateInput').addEventListener('change', chargerTables);
+        document.getElementById('nbPersonnesInput').addEventListener('change', chargerTables);
+
+        // ← Déclencher automatiquement au chargement si date déjà remplie
+        window.addEventListener('DOMContentLoaded', function () {
+            const dateInput = document.getElementById('dateInput');
+            if (dateInput.value) {
+                chargerTables();
+            }
+        });
+    </script>
+}
