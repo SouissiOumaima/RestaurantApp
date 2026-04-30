@@ -35,7 +35,7 @@ dotnet ef database update --project src/RestaurantApp.Infrastructure
 dotnet run --project src/RestaurantApp.Web
 
 ### 4. Accéder à l'application
-http://localhost:5000
+http://localhost:5059
 
 ## Comptes de test
 | Rôle  | Email                  | Mot de passe |
